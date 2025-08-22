@@ -10,6 +10,12 @@ localhost {
 		}
 	}
 
+	# Electric service routes
+	handle /electric/* {
+		uri strip_prefix /electric
+		reverse_proxy electric:3000
+	}
+
 	# Everything else goes to your frontend dev server (on host)
 	handle /* {
 		reverse_proxy host.docker.internal:5173

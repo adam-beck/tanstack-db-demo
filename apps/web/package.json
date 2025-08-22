@@ -10,13 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/electric-db-collection": "^0.1.6",
     "@tanstack/query-core": "^5.85.5",
     "@tanstack/query-db-collection": "^0.2.5",
     "@tanstack/react-db": "^0.1.6",
     "@tanstack/react-form": "^1.19.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

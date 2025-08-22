@@ -66,10 +66,17 @@ services:
     image: postgres:18beta3-alpine
     restart: always
     shm_size: 128mb
+    tmpfs:
+      - /tmp
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
+    command:
+      - -c
+      - listen_addresses=*
+      - -c
+      - wal_level=logical
     volumes: 
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -80,6 +87,18 @@ services:
       start_period: 10s
     ports:
       - "$POSTGRES_PORT:5432"
+  electric:
+    image: docker.io/electricsql/electric:latest
+    environment:
+      DATABASE_URL: postgresql://postgres:devpassword@db:5432/sitdown?sslmode=disable
+      # Not suitable for production. Only use insecure mode in development or if you've otherwise secured the Electric API.
+      # See https://electric-sql.com/docs/guides/security
+      ELECTRIC_INSECURE: true
+    ports:
+      - "3001:3000"
+    depends_on:
+      db:
+        condition: service_healthy
 configs:
   caddy_caddyfile:
     file: ./conf/Caddyfile.dev

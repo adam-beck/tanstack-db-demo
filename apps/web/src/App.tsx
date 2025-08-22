@@ -8,6 +8,7 @@ import { v7 } from "uuid";
 function App() {
   const [filterType, setFilterType] = useState<"all" | "blocked">("all");
   const listRef = useRef<HTMLUListElement>(null);
+  const hasInitialized = useRef(false);
 
   const { data } = useLiveQuery(
     (q) => {
@@ -19,9 +20,11 @@ function App() {
     [filterType]  // Add dependency array
   );
 
+  // Scroll to bottom on initial data load only
   useEffect(() => {
-    if (listRef.current) {
+    if (listRef.current && data.length > 0 && !hasInitialized.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
+      hasInitialized.current = true;
     }
   }, [data.length]);
 
@@ -32,7 +35,7 @@ function App() {
       blocked: false,
     },
     onSubmit: async ({ value }) => {
-      updatesCollection.insert({
+      await updatesCollection.insert({
         blocked: value.blocked,
         created_at: null,
         description: value.description,
@@ -40,6 +43,15 @@ function App() {
         username: value.username,
       });
 
+      // Scroll to bottom after insert
+      if (listRef.current) {
+        setTimeout(() => {
+          if (listRef.current) {
+            listRef.current.scrollTop = listRef.current.scrollHeight;
+          }
+        }, 100); // Small delay to ensure DOM updates
+      }
+      
       form.reset();
     },
   });
