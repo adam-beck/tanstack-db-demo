@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nitro build",
+    "dev": "nitro dev",
+    "prepare": "nitro prepare",
+    "preview": "node .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "kysely-codegen": "^0.18.5",
+    "nitropack": "latest"
+  },
+  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
+  "dependencies": {
+    "@types/node": "^24.0.14",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "kysely": "^0.28.5",
+    "kysely-postgres-js": "^2.0.0",
+    "postgres": "^3.4.7",
+    "zod": "^4.0.17"
+  }
+}

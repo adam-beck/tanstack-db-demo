@@ -1,0 +1,91 @@
+services:
+
+  caddy:
+    image: caddy:2.10.0-alpine
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal=host-gateway"
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      backend:
+        condition: service_healthy
+    configs:
+      - source: caddy_caddyfile
+        target: /etc/caddy/Caddyfile
+    healthcheck:
+      test: ["CMD", "caddy", "version"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+    ports:
+      - "8080:80"
+      - "4430:443"
+      - "4430:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+      - ./apps/backend/.env.local
+    environment:
+      # Unfortunatley, until this is resolved I think we'll need to rely on polling
+      # https://github.com/privatenumber/tsx/issues/266
+      - CHOKIDAR_USEPOLLING=true
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/backend
+          target: /app/
+          ignore:
+            - node_modules
+        - action: rebuild
+          path: ./apps/backend/package.json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+
+  db:
+    image: postgres:18beta3-alpine
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "$POSTGRES_PORT:5432"
+configs:
+  caddy_caddyfile:
+    file: ./conf/Caddyfile.dev
+
+volumes:
+  data:
+  caddy_data:
+  caddy_config:
+  postgres_data:

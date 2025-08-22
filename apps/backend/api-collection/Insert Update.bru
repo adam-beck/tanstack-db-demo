@@ -1,0 +1,24 @@
+meta {
+  name: Insert Update
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://localhost:4430/api/updates
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "update_id": "0198cf49-f2e5-71db-9659-60fcd2d17b25",
+    "username": "Adam",
+    "description": "Number 3",
+    "blocked": true
+  }
+}
+
+settings {
+  encodeUrl: true
+}

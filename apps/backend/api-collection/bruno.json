@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "sitdown",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

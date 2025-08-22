@@ -1,0 +1,26 @@
+# conf/Caddyfile.dev
+localhost {
+	# API routes go to the backend service (in Docker)
+	handle /api/* {
+		reverse_proxy backend:3000 {
+			# Health check for backend
+			health_uri /health
+			health_interval 10s
+			health_timeout 5s
+		}
+	}
+
+	# Everything else goes to your frontend dev server (on host)
+	handle /* {
+		reverse_proxy host.docker.internal:5173
+	}
+
+	# Use automatic HTTPS with local CA
+	tls internal
+
+	# Enable logging for development
+	log {
+		output stdout
+		level INFO
+	}
+}
