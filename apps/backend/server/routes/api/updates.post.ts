@@ -12,6 +12,11 @@ const CreateUpdateSchema: z.ZodType<NewUpdate> = z.object({
   blocked: z.boolean().optional(),
 });
 
+const wait = (waitTimeInMs: number = 1000) =>
+  new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), waitTimeInMs);
+  });
+
 export type CreateUpdateSchema = z.infer<typeof CreateUpdateSchema>;
 
 export default defineEventHandler(async (event) => {
@@ -19,12 +24,14 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const validatedData = CreateUpdateSchema.parse(body);
 
+    await wait(3000);
+
     const update = await db
       .insertInto("updates")
       .values({
         update_id: validatedData.update_id,
         username: validatedData.username,
-        description: validatedData.description,
+        description: validatedData.description + "!!!",
         blocked: validatedData.blocked,
       })
       .returningAll()
