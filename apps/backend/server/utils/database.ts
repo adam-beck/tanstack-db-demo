@@ -1,7 +1,8 @@
 import { Kysely } from "kysely";
-import { DB } from "kysely-codegen";
 import { PostgresJSDialect } from "kysely-postgres-js";
 import postgres from "postgres";
+
+import type { DB } from "../../db.d.ts";
 
 export const db = new Kysely<DB>({
   dialect: new PostgresJSDialect({

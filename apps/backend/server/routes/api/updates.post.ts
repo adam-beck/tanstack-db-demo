@@ -1,4 +1,4 @@
-import { DB } from "kysely-codegen";
+import type { DB } from "../../../db.d.ts";
 import { db } from "../../utils/database";
 import { Insertable } from "kysely";
 import { z } from "zod";
@@ -6,7 +6,7 @@ import { z } from "zod";
 type NewUpdate = Insertable<DB["updates"]>;
 
 const CreateUpdateSchema: z.ZodType<NewUpdate> = z.object({
-  update_id: z.uuidv7(),
+  update_id: z.uuidv7().optional(),
   username: z.string(),
   description: z.string(),
   blocked: z.boolean().optional(),
@@ -29,7 +29,6 @@ export default defineEventHandler(async (event) => {
     const update = await db
       .insertInto("updates")
       .values({
-        update_id: validatedData.update_id,
         username: validatedData.username,
         description: validatedData.description + "!!!",
         blocked: validatedData.blocked,
