@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { eq, Query, useLiveQuery } from "@tanstack/react-db";
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useForm } from "@tanstack/react-form";
 import { updatesCollection } from "./updatesCollection";
 import { v7 } from "uuid";
@@ -13,11 +13,13 @@ function App() {
   const { data } = useLiveQuery(
     (q) => {
       if (filterType === "blocked") {
-        return q.from({ updates: updatesCollection }).where(({ updates }) => eq(updates.blocked, true));
+        return q
+          .from({ updates: updatesCollection })
+          .where(({ updates }) => eq(updates.blocked, true));
       }
       return q.from({ updates: updatesCollection });
     },
-    [filterType]  // Add dependency array
+    [filterType], // Add dependency array
   );
 
   // Scroll to bottom on initial data load only
@@ -34,8 +36,8 @@ function App() {
       username: "",
       blocked: false,
     },
-    onSubmit: async ({ value }) => {
-      await updatesCollection.insert({
+    onSubmit: ({ value }) => {
+      updatesCollection.insert({
         blocked: value.blocked,
         created_at: null,
         description: value.description,
@@ -51,7 +53,7 @@ function App() {
           }
         }, 100); // Small delay to ensure DOM updates
       }
-      
+
       form.reset();
     },
   });

@@ -79,15 +79,4 @@ export default defineEventHandler(async (event) => {
       message: "Internal error",
     });
   }
-
-  // try {
-  //   const updates = await db.selectFrom("updates").selectAll().execute();
-  //
-  //   return updates;
-  // } catch (error) {
-  //   throw createError({
-  //     statusCode: 500,
-  //     statusMessage: "Failed to fetch `updates`",
-  //   });
-  // }
 });
