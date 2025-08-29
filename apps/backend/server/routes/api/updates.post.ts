@@ -12,12 +12,22 @@ const CreateUpdateSchema: z.ZodType<NewUpdate> = z.object({
   blocked: z.boolean().optional(),
 });
 
+const wait = async (milliseconds: number) => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, milliseconds);
+  });
+};
+
 export type CreateUpdateSchema = z.infer<typeof CreateUpdateSchema>;
 
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
     const validatedData = CreateUpdateSchema.parse(body);
+
+    await wait(15000);
 
     const update = await db
       .insertInto("updates")
@@ -45,15 +55,4 @@ export default defineEventHandler(async (event) => {
       message: "Internal error",
     });
   }
-
-  // try {
-  //   const updates = await db.selectFrom("updates").selectAll().execute();
-  //
-  //   return updates;
-  // } catch (error) {
-  //   throw createError({
-  //     statusCode: 500,
-  //     statusMessage: "Failed to fetch `updates`",
-  //   });
-  // }
 });
