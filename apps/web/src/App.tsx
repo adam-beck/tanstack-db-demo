@@ -24,7 +24,7 @@ function App() {
 
   // Scroll to bottom on initial data load only
   useEffect(() => {
-    if (listRef.current && data.length > 0 && !hasInitialized.current) {
+    if (listRef.current && data.length > 0 && hasInitialized.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
       hasInitialized.current = true;
     }
@@ -37,6 +37,7 @@ function App() {
       blocked: false,
     },
     onSubmit: ({ value }) => {
+      // this is a synchronous call
       updatesCollection.insert({
         blocked: value.blocked,
         created_at: null,
@@ -51,7 +52,7 @@ function App() {
           if (listRef.current) {
             listRef.current.scrollTop = listRef.current.scrollHeight;
           }
-        }, 100); // Small delay to ensure DOM updates
+        }, 10); // Small delay to ensure DOM updates
       }
 
       form.reset();
