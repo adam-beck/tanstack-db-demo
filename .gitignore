@@ -5,4 +5,4 @@ node_modules
 
 caddy-certs/*
 # But keep the directory itself
-!certs/.gitkeep
+!caddy-certs/.gitkeep
